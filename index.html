@@ -882,8 +882,6 @@
         const InternationalizationManager = {
             // Module metadata / 模块元数据
             metadata: {
-                version: '2.0.0',
-                supportedFormats: ['json', 'object'],
                 defaultLanguage: 'en',
                 fallbackLanguage: 'en'
             },
@@ -891,19 +889,13 @@
             // Module state / 模块状态
             state: {
                 currentLanguage: 'en',
-                isInitialized: false,
                 observers: new Set(),
                 cache: new Map()
             },
             
             // Language configuration / 语言配置
             languageConfig: {
-                supportedLanguages: ['zh', 'en'],
-                languageNames: {
-                    zh: { native: '中文', english: 'Chinese' },
-                    en: { native: 'English', english: 'English' }
-                },
-                rtl: [] // Right-to-left languages / 从右到左的语言
+                supportedLanguages: ['zh', 'en']
             },
             
             // Translation data / 翻译数据
@@ -1065,7 +1057,6 @@
                     this.state.currentLanguage = defaultLanguage;
                 }
                 
-                this.state.isInitialized = true;
                 this.notifyObservers('initialized', { language: this.state.currentLanguage });
                 
                 return this;
@@ -1148,38 +1139,12 @@
             },
             
             /**
-             * Format text with variables / 格式化带变量的文本
-             * @param {string} key - Translation key / 翻译键
-             * @param {Object} variables - Variables for substitution / 替换变量
-             * @param {string} language - Language code / 语言代码
-             * @returns {string} Formatted text / 格式化后的文本
-             */
-            formatText(key, variables = {}, language = null) {
-                return this.getText(key, language, variables);
-            },
-            
-            /**
              * Check if language is supported / 检查语言是否支持
              * @param {string} language - Language code / 语言代码
              * @returns {boolean} Support status / 支持状态
              */
             isLanguageSupported(language) {
                 return this.languageConfig.supportedLanguages.includes(language);
-            },
-            
-            /**
-             * Get language metadata / 获取语言元数据
-             * @param {string} language - Language code / 语言代码
-             * @returns {Object} Language metadata / 语言元数据
-             */
-            getLanguageMetadata(language = null) {
-                const targetLanguage = language || this.state.currentLanguage;
-                return {
-                    code: targetLanguage,
-                    name: this.languageConfig.languageNames[targetLanguage],
-                    isRtl: this.languageConfig.rtl.includes(targetLanguage),
-                    isSupported: this.isLanguageSupported(targetLanguage)
-                };
             },
             
             /**
@@ -1202,18 +1167,15 @@
                     getText: this.getText.bind(this),
                     switchLanguage: this.switchLanguage.bind(this),
                     getAllTexts: this.getAllTexts.bind(this),
-                    formatText: this.formatText.bind(this),
                     
                     // Utility methods / 工具方法
                     isLanguageSupported: this.isLanguageSupported.bind(this),
                     getSegmentTypeName: this.getSegmentTypeName.bind(this),
-                    getLanguageMetadata: this.getLanguageMetadata.bind(this),
                     addObserver: this.addObserver.bind(this),
                     
                     // State getters / 状态获取器
                     getCurrentLanguage: () => this.state.currentLanguage,
-                    getSupportedLanguages: () => [...this.languageConfig.supportedLanguages],
-                    isInitialized: () => this.state.isInitialized
+                    getSupportedLanguages: () => [...this.languageConfig.supportedLanguages]
                 };
             },
             
@@ -1307,29 +1269,17 @@
         const I18nData = {
             // Legacy properties / 遗留属性
             supportedLanguages: I18nAPI.getSupportedLanguages(),
-            languageNames: InternationalizationManager.languageConfig.languageNames,
 
             // Legacy methods / 遗留方法
             getText: (key, language = 'en') => I18nAPI.getText(key, language),
-            getAllTexts: (language = 'en') => I18nAPI.getAllTexts(language),
             isLanguageSupported: (language) => I18nAPI.isLanguageSupported(language),
-            getSegmentTypeName: (segmentType, language = 'en') => I18nAPI.getSegmentTypeName(segmentType, language),
-            formatText: (key, variables = {}, language = 'en') => I18nAPI.formatText(key, variables, language)
+            getSegmentTypeName: (segmentType, language = 'en') => I18nAPI.getSegmentTypeName(segmentType, language)
         };
 
         // Backward compatible i18n object / 向后兼容的i18n对象
         const i18n = {
             get zh() { return I18nAPI.getAllTexts('zh'); },
-            get en() { return I18nAPI.getAllTexts('en'); },
-            
-            // Convenience method: get current language text / 便利方法：获取当前语言文本
-            get current() { return I18nAPI.getAllTexts(currentLanguage); },
-            
-            // Convenience method: get text / 便利方法：获取文本
-            getText: (key, language) => I18nAPI.getText(key, language || currentLanguage),
-            
-            // Convenience method: get segment type name / 便利方法：获取分段类型名称
-            getSegmentTypeName: (segmentType, language) => I18nAPI.getSegmentTypeName(segmentType, language || currentLanguage)
+            get en() { return I18nAPI.getAllTexts('en'); }
         };
 
         // Set up language observer to sync currentLanguage variable / 设置语言观察者以同步currentLanguage变量
@@ -1365,11 +1315,7 @@
             },
             showLegend: true, // Legend display switch / 图例显示开关
             legendPosition: 'bottomRight', // Default legend position: 'right' or 'bottomRight' / 默认图例位置: 'right' 或 'bottomRight'
-            rings: [], // Will be initialized by initializeDefaultRings() / 将由initializeDefaultRings()初始化
-            spectrumColors: [
-                '#FF0000', '#FF4500', '#FF8C00', '#FFD700', '#FFFF00', '#9AFF9A',
-                '#00FF00', '#00FF7F', '#00FFFF', '#0080FF', '#4000FF', '#8000FF'
-            ]
+            rings: [] // Will be initialized by initializeDefaultRings() / 将由initializeDefaultRings()初始化
         };
 
         // Initialize default rings with proper segment types / 用正确的分段类型初始化默认圈层
@@ -1652,10 +1598,9 @@
              * @param {number} availableWidth - Available width / 可用宽度
              * @param {number} availableHeight - Available height / 可用高度
              * @param {number} maxFontSize - Maximum font size / 最大字体大小
-             * @param {number} minFontSize - Minimum font size / 最小字体大小
              * @returns {number} Optimal font size / 最佳字体大小
              */
-            calculateOptimalFontSize(lines, availableWidth, availableHeight, maxFontSize = 24, minFontSize = 10) {
+            calculateOptimalFontSize(lines, availableWidth, availableHeight, maxFontSize = 24) {
                 const lineCount = Math.max(1, lines.length);
                 const maxLineLength = Math.max(1, ...lines.map(line => line.length));
                 
@@ -1991,7 +1936,7 @@
                         const lines = String(labels[j]).split('\n');
                         const arcLength = textRadius * angleStep * Math.PI / 180; // angleStep is in degrees / angleStep为角度值
                         const ringThickness = ring.outerRadius - ring.innerRadius;
-                        let fontSize = SVGUtils.calculateOptimalFontSize(lines, arcLength, ringThickness, 14, 6);
+                        let fontSize = SVGUtils.calculateOptimalFontSize(lines, arcLength, ringThickness, 14);
                         // calculateOptimalFontSize floors at 1, so clamp to a readable range here / 该函数下限为1，这里再钳制到可读范围
                         fontSize = Math.max(6, Math.min(14, fontSize));
                         const textElement = SVGText.createSegmentText(
@@ -2212,7 +2157,6 @@
                 return {
                     numberWidth,
                     contentWidth,
-                    totalWidth: numberWidth + contentWidth + 5,
                     maxContentWidth
                 };
             },
@@ -2504,7 +2448,7 @@
                 });
 
                 // Calculate font size based on line count and available space / 根据行数和可用空间计算字体大小
-                const fontSize = SVGUtils.calculateOptimalFontSize(wrappedLines, availableWidth, availableHeight, 24, 10);
+                const fontSize = SVGUtils.calculateOptimalFontSize(wrappedLines, availableWidth, availableHeight, 24);
 
                 // Create multi-line text / 创建多行文本
                 const centerTextGroup = SVGText.createMultiLineText(config.centerX, config.centerY, wrappedLines, {
@@ -2516,42 +2460,6 @@
 
                 centerTextGroup.setAttribute('id', 'centerTextGroup');
                 svg.appendChild(centerTextGroup);
-            },
-
-            /**
-             * Calculate center text area dimensions / 计算中心文字区域尺寸
-             * @param {Object} config - Global configuration / 全局配置
-             * @returns {Object} Center text area dimensions / 中心文字区域尺寸
-             */
-            calculateTextArea(config) {
-                return {
-                    availableHeight: config.centerRadius * 1.6,
-                    availableWidth: config.centerRadius * 1.8,
-                    centerX: config.centerX,
-                    centerY: config.centerY
-                };
-            },
-
-            /**
-             * Validate center text content / 验证中心文字内容
-             * @param {string} text - Text content / 文本内容
-             * @returns {Object} Validation result / 验证结果
-             */
-            validateTextContent(text) {
-                if (!text || text.trim() === '') {
-                    return { valid: false, reason: 'empty' };
-                }
-
-                const lines = text.split('\n').filter(line => line.trim() !== '');
-                if (lines.length === 0) {
-                    return { valid: false, reason: 'no_valid_lines' };
-                }
-
-                if (lines.length > 10) {
-                    return { valid: false, reason: 'too_many_lines', maxLines: 10 };
-                }
-
-                return { valid: true, lines };
             }
         };
 
@@ -3436,7 +3344,6 @@
             // Module metadata / 模块元数据
             metadata: {
                 version: '1.0.0',
-                supportedFormats: ['json'],
                 fileExtension: '.json',
                 mimeType: 'application/json'
             },
@@ -3492,10 +3399,7 @@
                 return {
                     save: this.saveConfiguration.bind(this),
                     load: this.loadConfiguration.bind(this),
-                    export: this.exportConfiguration.bind(this),
-                    import: this.importConfiguration.bind(this),
                     validate: this.validateConfiguration.bind(this),
-                    getSchema: this.getConfigurationSchema.bind(this),
                     reset: this.resetConfiguration.bind(this)
                 };
             },
@@ -3507,7 +3411,6 @@
              */
             async saveConfiguration(options = {}) {
                 const { filename, prompt = true } = options;
-                const t = this.dependencies.i18n[currentLanguage];
                 
                 try {
                     // Build configuration object / 构建配置对象
@@ -3583,68 +3486,6 @@
             },
             
             /**
-             * Export configuration as JSON string / 导出配置为JSON字符串
-             * @param {Object} options - Export options / 导出选项
-             * @returns {Object} Export result / 导出结果
-             */
-            exportConfiguration(options = {}) {
-                const { pretty = true, validate = true } = options;
-                
-                try {
-                    const configuration = this.buildConfigurationObject();
-                    
-                    if (validate) {
-                        const validation = this.validateConfiguration(configuration);
-                        if (!validation.isValid) {
-                            throw new Error(`Configuration validation failed: ${validation.errors.join(', ')}`);
-                        }
-                    }
-                    
-                    const jsonString = pretty ? 
-                        JSON.stringify(configuration, null, 2) : 
-                        JSON.stringify(configuration);
-                        
-                    return {
-                        success: true,
-                        data: jsonString,
-                        configuration
-                    };
-                    
-                } catch (error) {
-                    return this.handleError('export', error);
-                }
-            },
-            
-            /**
-             * Import configuration from JSON string / 从JSON字符串导入配置
-             * @param {string} jsonString - JSON configuration string / JSON配置字符串
-             * @returns {Promise} Import result / 导入结果
-             */
-            async importConfiguration(jsonString) {
-                try {
-                    const configuration = this.parseConfiguration(jsonString);
-                    
-                    // Validate configuration / 验证配置
-                    const validation = this.validateConfiguration(configuration);
-                    if (!validation.isValid) {
-                        throw new Error(`Invalid configuration: ${validation.errors.join(', ')}`);
-                    }
-                    
-                    // Apply configuration / 应用配置
-                    await this.applyConfiguration(configuration);
-                    
-                    return {
-                        success: true,
-                        configuration,
-                        validation
-                    };
-                    
-                } catch (error) {
-                    return this.handleError('import', error);
-                }
-            },
-            
-            /**
              * Validate configuration object / 验证配置对象
              * @param {Object} configuration - Configuration to validate / 要验证的配置
              * @returns {Object} Validation result / 验证结果
@@ -3708,48 +3549,6 @@
                     errors,
                     warnings,
                     hasWarnings: warnings.length > 0
-                };
-            },
-            
-            /**
-             * Get configuration schema / 获取配置模式
-             * @returns {Object} Configuration schema / 配置模式
-             */
-            getConfigurationSchema() {
-                return {
-                    type: 'object',
-                    required: ['version', 'rings'],
-                    properties: {
-                        version: { type: 'string' },
-                        timestamp: { type: 'string' },
-                        language: { type: 'string', enum: I18nData.supportedLanguages },
-                        theme: { type: 'string', enum: ThemeManager.supportedThemes },
-                        centerNames: {
-                            type: 'object',
-                            properties: {
-                                zh: { type: 'string' },
-                                en: { type: 'string' }
-                            }
-                        },
-                        showLegend: { type: 'boolean' },
-                        legendPosition: { type: 'string', enum: ['right', 'bottomRight'] },
-                        ringCount: { type: 'integer', minimum: 1, maximum: 99 },
-                        rings: {
-                            type: 'array',
-                            items: {
-                                type: 'object',
-                                required: ['segmentType', 'type'],
-                                properties: {
-                                    segmentType: { type: 'string' },
-                                    type: { type: 'string', enum: ['solid', 'segments'] },
-                                    color: { type: 'string' },
-                                    rotation: { type: 'number' },
-                                    segmentLabels: { type: 'array', items: { type: 'string' } },
-                                    segmentName: { type: 'string' }
-                                }
-                            }
-                        }
-                    }
                 };
             },
             
@@ -4084,13 +3883,6 @@
             // 当前主题 / Current theme
             currentTheme: 'light',
             
-            // 主题显示名称 / Theme display names
-            themeNames: {
-                system: { zh: '跟随系统', en: 'Follow System' },
-                light: { zh: '浅色', en: 'Light' },
-                dark: { zh: '暗色', en: 'Dark' }
-            },
-            
             /**
              * 切换主题 / Switch theme
              * @param {string} theme - Theme name: system/light/dark / 主题名称：system/light/dark
@@ -4127,17 +3919,6 @@
             },
             
             /**
-             * 获取系统主题偏好 / Get system theme preference
-             * @returns {string} 'light' or 'dark'
-             */
-            getSystemTheme() {
-                if (window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches) {
-                    return 'dark';
-                }
-                return 'light';
-            },
-            
-            /**
              * 保存主题偏好到本地存储 / Save theme preference to localStorage
              * @param {string} theme - Theme name / 主题名称
              */
@@ -4166,31 +3947,6 @@
             },
             
             /**
-             * 获取主题显示名称 / Get theme display name
-             * @param {string} theme - Theme name / 主题名称
-             * @param {string} language - Language code / 语言代码
-             * @returns {string} Display name / 显示名称
-             */
-            getThemeName(theme, language = 'en') {
-                if (this.themeNames[theme] && this.themeNames[theme][language]) {
-                    return this.themeNames[theme][language];
-                }
-                return theme; // Fallback to theme key / 回退到主题键名
-            },
-            
-            /**
-             * 获取所有主题的显示选项 / Get display options for all themes
-             * @param {string} language - Language code / 语言代码
-             * @returns {Array} Array of {value, label} objects
-             */
-            getAllThemeOptions(language = 'en') {
-                return this.supportedThemes.map(theme => ({
-                    value: theme,
-                    label: this.getThemeName(theme, language)
-                }));
-            },
-            
-            /**
              * 检查主题是否支持 / Check if theme is supported
              * @param {string} theme - Theme name / 主题名称
              * @returns {boolean} Whether theme is supported / 是否支持该主题
@@ -4207,41 +3963,6 @@
             onThemeChanged(newTheme) {
                 // Default implementation: can be overridden externally / 默认实现：可以被外部覆盖
                 // Theme change handling can be implemented here if needed / 如果需要可以在这里实现主题切换处理
-            },
-            
-            /**
-             * 监听系统主题变化 / Listen for system theme changes
-             */
-            watchSystemTheme() {
-                if (window.matchMedia) {
-                    const mediaQuery = window.matchMedia('(prefers-color-scheme: dark)');
-                    
-                    // 监听系统主题变化 / Listen for system theme changes
-                    const handleSystemThemeChange = (e) => {
-                        if (this.currentTheme === 'system') {
-                            // 如果当前是跟随系统，则重新应用主题 / If currently following system, reapply theme
-                            document.documentElement.setAttribute('data-theme', 'system');
-                        }
-                    };
-                    
-                    // 添加监听器 / Add listener
-                    if (mediaQuery.addListener) {
-                        mediaQuery.addListener(handleSystemThemeChange);
-                    } else if (mediaQuery.addEventListener) {
-                        mediaQuery.addEventListener('change', handleSystemThemeChange);
-                    }
-                    
-                    // 返回清理函数 / Return cleanup function
-                    return () => {
-                        if (mediaQuery.removeListener) {
-                            mediaQuery.removeListener(handleSystemThemeChange);
-                        } else if (mediaQuery.removeEventListener) {
-                            mediaQuery.removeEventListener('change', handleSystemThemeChange);
-                        }
-                    };
-                }
-                
-                return () => {}; // No-op cleanup function / 空的清理函数
             }
         };
 
