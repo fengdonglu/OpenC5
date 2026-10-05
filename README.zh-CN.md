@@ -8,11 +8,13 @@
 
 <img src="assets/hero.zh-CN.png" alt="OpenC5 用户界面" style="max-width:100%;height:auto;">
 
-## 简介
+---
+
+## 🎯 简介
 
 OpenC5 从经典的「五度圈」概念出发，将其泛化为通用的 N 度环形关系图工具。它不再局限于单一的音乐理论布局，而是让你自由构建多层同心圆环、自行决定每个环的分段内容，并独立旋转每一个环。它适用于音乐理论、传统文化、天文学，以及其它循环或关系型可视化场景。
 
-## 功能特性
+## ⚙️ 功能特性
 
 - **多圈层布局**：**1–99** 个同心圆环（输入时校验），每个环独立配置。
 - **11 种预设分段类型**：手工输入、天干、地支、二十四节气、先天八卦、后天八卦、子午流注 / 经络时辰、音乐大调（五度圈）、音乐小调、十二星座、十二生肖。
@@ -33,13 +35,13 @@ OpenC5 从经典的「五度圈」概念出发，将其泛化为通用的 N 度�
 - **中心文字**：支持多行、多语言存储。
 - **轻量预览**：拖拽与滑块使用仅 transform 的轻量预览，不整图重建，松手后统一重绘一次。
 
-## 在线演示
+## 🔗 在线演示
 
 https://fengdonglu.github.io/OpenC5/
 
-> GitHub Pages 尚未发布 / 启用，发布后生效。
+> **注意：** GitHub Pages 尚未发布 / 启用，发布后生效。
 
-## 快速开始
+## 🚀 快速开始
 
 直接在浏览器中打开 `index.html`，或用本地 HTTP 服务器托管该目录：
 
@@ -55,7 +57,9 @@ npx serve .
 
 然后访问 `http://localhost:8000/`。
 
-## 使用说明
+> **提示：** 也可以直接打开 `index.html`——无需任何服务器。
+
+## 🧭 使用说明
 
 ### 基本参数
 
@@ -95,11 +99,11 @@ npx serve .
 
 把完整配置保存为 JSON，之后可导入以还原图表。导入成功后会显示 toast 提示。
 
-## 架构
+## 🏗️ 架构
 
 OpenC5 是单文件应用：全部 HTML、CSS 与 JavaScript 都内联在 `index.html`，**零依赖**、无构建步骤。JavaScript 采用原生 JavaScript，以普通对象字面量模块组织——例如 `InternationalizationManager`、`SegmentData`、`SVGUtils`、`SVGShapes`、`SVGText`、`RingRenderer`、`Legend`、`CenterText`、`ConfigurationManager`、`ThemeManager`。没有框架（无 Vue）、没有类继承、没有打包器。图形直接渲染为 SVG，且仅主题偏好持久化到 `localStorage`。
 
-## 项目结构
+## 🗂️ 项目结构
 
 ```text
 OpenC5/
@@ -119,11 +123,11 @@ OpenC5/
 └── .gitignore
 ```
 
-## 浏览器兼容
+## 🌐 浏览器兼容
 
 OpenC5 面向现代常青浏览器（较新的 Chrome、Edge、Firefox、Safari）。它依赖标准 SVG 渲染、`localStorage`、Clipboard API，以及用于**跟随系统**主题的 `prefers-color-scheme`。在不支持这些特性的旧浏览器中，具体表现可能存在差异。
 
-## 测试
+## 🧪 测试
 
 仓库自带三个基于 Node 内置能力的 `.mjs` 测试。请在仓库根目录运行：
 
@@ -133,9 +137,9 @@ node tests/layout.test.mjs
 node tests/regression.test.mjs
 ```
 
-## RoadMap
+## 🗺️ RoadMap
 
-以下均为计划中、**尚未实现**的功能：
+> **注意：** 以下均为计划中、**尚未实现**的功能：
 
 - 音乐五度圈专用模式：起始调 / 方向 / 起始角度、调号数量、等音异名（F♯/G♭）、音名体系（英美 / 德式 H-B / 中文）、相对大小调连线、ii–V–I 进行路径、四度循环箭头。
 - 通用 N 节点环形模式：可配置步长 k、节点分组配色、有向 / 无向 / 加权连边。
@@ -145,14 +149,16 @@ node tests/regression.test.mjs
 - 插件系统与 PWA 离线模式。
 - 更多预设（行星、元素等）。
 
-## 许可证
+---
+
+## 📄 许可证
 
 MIT © 2025 fengdonglu。详见 [LICENSE](LICENSE)。
 
-## Vibe Coding 说明
+## ✨ Vibe Coding 说明
 
 > 本项目基于 Vibe Coding 构建：作者未手工输入任何代码，全部代码均由自然语言驱动的智能体生成。
 
-## 仓库
+## 🐙 仓库
 
 返回仓库：https://github.com/fengdonglu/OpenC5
