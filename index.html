@@ -292,85 +292,6 @@
             transform: translateX(-50%);
         }
 
-        /* General mobile layout styles - for mobile and desktop with insufficient width / 通用移动端布局样式 - 用于移动端和桌面宽度不足的情况 */
-        .mobile-layout {
-            overflow: auto !important;
-        }
-
-        .mobile-layout .main-container {
-            flex-direction: column !important;
-            min-height: 100vh !important;
-            height: auto !important;
-            overflow: visible !important;
-        }
-
-        .mobile-layout .preview-panel {
-            position: fixed !important;
-            top: 0 !important;
-            left: 0 !important;
-            width: 100vw !important;
-            height: 60vh !important;
-            height: 60svh !important; /* Use small viewport units to avoid mobile browser address bar effects / 使用小视口单位避免移动端浏览器地址栏影响 */
-            z-index: 1000 !important;
-            background: var(--input-bg) !important;
-            overflow: hidden !important;
-        }
-
-        .mobile-layout .params-panel {
-            position: fixed !important;
-            top: 60vh !important;
-            top: 60svh !important; /* Use small viewport units to avoid mobile browser address bar effects / 使用小视口单位避免移动端浏览器地址栏影响 */
-            left: 0 !important;
-            right: 0 !important;
-            bottom: 0 !important;
-            border-left: none !important;
-            border-top: 1px solid var(--border-color) !important;
-            overflow-y: auto !important;
-            overflow-x: hidden !important;
-            background-color: var(--panel-bg) !important;
-            margin: 0 !important;
-            padding: 15px !important;
-            padding-bottom: max(25px, env(safe-area-inset-bottom) + 15px) !important;
-            /* Ensure content can scroll properly / 确保内容可以正确滚动 */
-            box-sizing: border-box !important;
-            -webkit-overflow-scrolling: touch !important;
-            /* Improved scrollbar styles / 改进滚动条样式 */
-            scrollbar-width: thin !important;
-            scrollbar-color: rgba(136, 136, 136, 0.5) transparent !important;
-            flex: none !important;
-            height: auto !important;
-            min-width: auto !important;
-        }
-
-        /* Mobile layout scrollbar styles / 移动端布局下的滚动条样式 */
-        .mobile-layout .params-panel::-webkit-scrollbar {
-            width: 6px !important;
-        }
-
-        .mobile-layout .params-panel::-webkit-scrollbar-track {
-            background: transparent !important;
-            border-radius: 3px !important;
-        }
-
-        .mobile-layout .params-panel::-webkit-scrollbar-thumb {
-            background: rgba(136, 136, 136, 0.5) !important;
-            border-radius: 3px !important;
-            border: none !important;
-        }
-
-        .mobile-layout .params-panel::-webkit-scrollbar-thumb:hover {
-            background: rgba(136, 136, 136, 0.7) !important;
-        }
-
-        .mobile-layout .params-panel::-webkit-scrollbar-thumb:active {
-            background: rgba(136, 136, 136, 0.9) !important;
-        }
-
-        .mobile-layout h1 {
-            font-size: 20px !important;
-            margin-bottom: 15px !important;
-        }
-
         /* Desktop styles - wide aspect ratio with sufficient width / 桌面端样式 - 宽比高大且有足够宽度的情况 */
         @media (min-aspect-ratio: 1/1) and (min-width: calc(100vh + 400px)) {
             body {
@@ -807,29 +728,6 @@
             display: none;
         }
 
-        .preset-buttons {
-            display: flex;
-            gap: 8px;
-            flex-wrap: wrap;
-            margin-top: 10px;
-        }
-
-        .preset-btn {
-            padding: 6px 12px;
-            border: 1px solid #007bff;
-            border-radius: 4px;
-            background-color: white;
-            color: #007bff;
-            cursor: pointer;
-            font-size: 12px;
-            transition: all 0.2s;
-        }
-
-        .preset-btn:hover {
-            background-color: #007bff;
-            color: white;
-        }
-
         .error-message {
             color: #dc3545;
             font-size: 12px;
@@ -860,13 +758,6 @@
             background-color: var(--button-hover);
         }
 
-        .info {
-            max-width: 800px;
-            text-align: center;
-            color: #666;
-            line-height: 1.6;
-        }
-
         .manual-input {
             margin-top: 10px;
             padding: 10px;
@@ -890,18 +781,6 @@
             border-radius: 4px;
             background-color: var(--input-bg);
             color: var(--text-color);
-        }
-
-        .segment-labels {
-            display: grid;
-            grid-template-columns: repeat(4, 1fr);
-            gap: 5px;
-        }
-
-        .segment-labels input {
-            width: 100%;
-            padding: 4px 8px;
-            font-size: 12px;
         }
 
 
@@ -1032,7 +911,6 @@
                 zh: {
                     // Page basic info / 页面基础信息
                     title: 'N度关系图生成器',
-                    subtitle: 'N-Degree Relationship Diagram Generator',
                     
                     // Basic parameters section / 基础参数区
                     basicParams: '⚙️ 基本参数',
@@ -1085,7 +963,6 @@
                     
                     // Ring configuration / 圈层配置
                     ringConfig: '🎯 圈层配置',
-                    ring: '圈',
                     segmentType: '🏷️ 分段类型',
                     colorType: '🎨 颜色类型',
                     solid: '纯色',
@@ -1101,7 +978,6 @@
                 en: {
                     // Page basic info / 页面基础信息
                     title: 'N-Degree Relationship Diagram Generator',
-                    subtitle: 'N度关系图生成器',
                     
                     // Basic parameters section / 基础参数区
                     basicParams: '⚙️ Basic Parameters',
@@ -1154,7 +1030,6 @@
                     
                     // Ring configuration / 圈层配置
                     ringConfig: '🎯 Ring Configuration',
-                    ring: 'Ring',
                     segmentType: '🏷️ Segment Type',
                     colorType: '🎨 Color Type',
                     solid: 'Solid',
