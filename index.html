@@ -133,6 +133,32 @@
         .repo-link:hover { text-decoration: underline; }
         .repo-link svg { display: block; }
 
+        /* Transient success toast / 短暂的成功提示浮标 */
+        .app-toast {
+            position: fixed;
+            left: 50%;
+            bottom: 24px;
+            transform: translateX(-50%) translateY(8px);
+            background-color: var(--panel-bg);
+            color: var(--text-color);
+            border: 1px solid var(--border-color);
+            border-radius: 6px;
+            padding: 10px 16px;
+            font-size: 14px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+            opacity: 0;
+            visibility: hidden;
+            pointer-events: none;
+            transition: opacity 0.25s ease, transform 0.25s ease, visibility 0.25s;
+            z-index: 2000;
+        }
+
+        .app-toast.show {
+            opacity: 1;
+            visibility: visible;
+            transform: translateX(-50%) translateY(0);
+        }
+
         .params-panel {
             flex: 1;
             background-color: var(--panel-bg);
@@ -364,7 +390,7 @@
 
             .params-panel {
                 flex: 1;
-                border-left: 1px solid #e0e0e0;
+                border-left: 1px solid var(--border-color);
                 border-top: none;
                 height: 100vh;
                 margin-top: 0;
@@ -883,6 +909,7 @@
 </head>
 
 <body>
+    <div id="appToast" class="app-toast" role="status" aria-live="polite"></div>
     <div class="main-container">
         <div class="preview-panel">
         <a class="repo-link" href="https://github.com/fengdonglu/OpenC5" aria-label="GitHub repository" title="GitHub repository" target="_blank" rel="noopener">
@@ -2748,6 +2775,22 @@
             generateCircle();
         }
 
+        // Transient toast timer / 提示浮标定时器
+        let appToastTimer = null;
+
+        // Show a transient toast message / 显示一个短暂提示
+        function showToast(msg) {
+            const toast = document.getElementById('appToast');
+            if (!toast) return;
+            toast.textContent = msg;
+            toast.classList.add('show');
+            if (appToastTimer) clearTimeout(appToastTimer);
+            appToastTimer = setTimeout(() => {
+                toast.classList.remove('show');
+                appToastTimer = null;
+            }, 2000);
+        }
+
         // Global interaction state / 全局交互状态
         let globalInteractionState = {
             isDragging: false,
@@ -4025,6 +4068,9 @@
                     document.getElementById('ringCount').value = configuration.ringCount;
                     await this.applyRingConfiguration(configuration);
                 }
+
+                // Notify success once the whole configuration has been applied / 整份配置应用完成后提示成功
+                showToast(I18nAPI.getText('loadConfigSuccess', currentLanguage));
             },
             
             /**
