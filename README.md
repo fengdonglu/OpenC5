@@ -39,8 +39,6 @@ OpenC5 starts from the classic "circle of fifths" concept and generalizes it int
 
 https://fengdonglu.github.io/OpenC5/
 
-> **Note:** GitHub Pages is not yet published / enabled; the demo will be available once it is enabled.
-
 ## 🚀 Quick Start
 
 Open `index.html` directly in a modern browser, or serve the folder over HTTP:

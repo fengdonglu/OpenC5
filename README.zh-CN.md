@@ -39,8 +39,6 @@ OpenC5 从经典的「五度圈」概念出发，将其泛化为通用的 N 度�
 
 https://fengdonglu.github.io/OpenC5/
 
-> **注意：** GitHub Pages 尚未发布 / 启用，发布后生效。
-
 ## 🚀 快速开始
 
 直接在浏览器中打开 `index.html`，或用本地 HTTP 服务器托管该目录：
