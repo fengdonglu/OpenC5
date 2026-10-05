@@ -280,12 +280,12 @@ check(
     'handleMouseMove must not call generateCircle() per frame during drag'
 );
 
-// ===== Batch 4: M-4 rotation slider input is debounced =====
+// ===== Batch 4 / Batch ①: M-4 rotation slider input is a cheap transform-only preview =====
 const rotationBody = extractFunctionBody(html, 'updateRingRotation');
 check(rotationBody.length > 0, 'updateRingRotation body could not be parsed');
 check(
-    /debouncedRegenerate\s*\(/.test(rotationBody),
-    'updateRingRotation must reuse the existing debouncedRegenerate() instead of redrawing on every input'
+    /setAttribute\(\s*['"]transform['"]/.test(rotationBody) && /refreshRingLabels/.test(rotationBody),
+    'updateRingRotation must preview rotation cheaply via transform + refreshRingLabels instead of a full rebuild'
 );
 check(
     !/generateCircle\s*\(/.test(rotationBody),

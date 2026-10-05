@@ -2148,6 +2148,8 @@
                     this.getRingSegmentConfig(ring, currentLanguage);
                 const angleStep = 360 / segmentCount;
                 const rotation = ring.rotation || defaultRotation || 0;
+                // Remember the effective angle baked into the geometry for cheap slider previews / 记录已烘焙进几何的有效角度，供滑块廉价预览使用
+                renderedRotations[ringIndex] = rotation;
 
                 // Determine how to render ring based on color type / 根据颜色类型决定如何渲染圆环
                 if (ring.type === 'solid') {
@@ -2553,6 +2555,9 @@
             }
         };
 
+        // Effective rotation baked into each ring's geometry on the last full render / 上次整图渲染时烘焙进各圈层几何的有效角度
+        let renderedRotations = [];
+
         // Generate the complete SVG / 生成完整的SVG
         function generateCircle() {
             const container = document.getElementById('svg-container');
@@ -2579,6 +2584,9 @@
                 viewBox: `0 0 ${svgWidth} ${svgHeight}`,
                 xmlns: 'http://www.w3.org/2000/svg'
             });
+
+            // Reset the per-ring baked-rotation cache before rebuilding / 重建前重置每个圈层的已烘焙角度缓存
+            renderedRotations = [];
 
             // Generate rings from outside to inside using the new RingRenderer module / 使用新的RingRenderer模块从外到内生成圆环
             for (let i = config.rings.length - 1; i >= 0; i--) {
@@ -3251,10 +3259,32 @@
             generateCircle();
         }
 
-        // Update ring rotation (debounced for high-frequency slider input) / 更新圈层旋转角度（高频滑块输入防抖）
+        // Cheap rotation preview while dragging the slider (transform only, no full rebuild) / 拖拽滑块时仅做廉价旋转预览（只更新变换，不整图重建）
         function updateRingRotation(index, rotation) {
-            config.rings[index].rotation = parseFloat(rotation) || 0;
-            debouncedRegenerate();
+            const parsed = parseFloat(rotation) || 0;
+            config.rings[index].rotation = parsed;
+
+            const ring = config.rings[index];
+            // Mirror renderRing's effective angle (0 falls back to the segment default) / 与renderRing的有效角度一致（0回退为分段默认角度）
+            const segmentConfig = RingRenderer.getRingSegmentConfig(ring, currentLanguage);
+            const defaultRotation = (segmentConfig && segmentConfig.defaultRotation) || 0;
+            const effective = parsed || defaultRotation || 0;
+            const rendered = typeof renderedRotations[index] === 'number' ? renderedRotations[index] : effective;
+            const delta = effective - rendered;
+
+            const svg = document.querySelector('#svg-container svg');
+            if (!svg) return;
+
+            // Only the angular geometry gets a rigid rotation / 仅角度几何图形做刚性旋转
+            const cx = config.centerX;
+            const cy = config.centerY;
+            [`segmentRing${index}`, `radialLines${index}`].forEach(id => {
+                const group = svg.querySelector(`#${id}`);
+                if (group) group.setAttribute('transform', `rotate(${delta} ${cx} ${cy})`);
+            });
+
+            // Labels contain upright text, so re-position them instead of rotating the group / 标签含正立文字，需重新定位而非旋转整组
+            RingRenderer.refreshRingLabels(svg, ring, index, config, currentLanguage);
         }
 
         // Apply ring rotation immediately and flush any pending debounce / 立即应用圈层旋转并刷新待处理防抖
