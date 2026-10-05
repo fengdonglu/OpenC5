@@ -1,0 +1,8 @@
+.claude/
+.kiro/
+.idea/
+.vscode/
+MEMORIES.md
+_specs/
+_archive_docs/
+*.log
