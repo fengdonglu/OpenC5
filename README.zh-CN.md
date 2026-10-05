@@ -1,5 +1,7 @@
 # OpenC5 — N 度关系图生成器
 
+🌐 [English](README.md) · [简体中文](README.zh-CN.md)
+
 一个**单文件**、**零依赖**的 Web 应用，把经典的「五度圈」泛化为可配置的 N 度环形关系图生成器。
 
 ![License: MIT](https://img.shields.io/badge/license-MIT-blue.svg)

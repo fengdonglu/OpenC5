@@ -1,5 +1,7 @@
 # OpenC5 — N-Degree Relationship Diagram Generator
 
+🌐 [English](README.md) · [简体中文](README.zh-CN.md)
+
 A **single-file**, **zero-dependency** web app that generalizes the classic "circle of fifths" into a configurable N-degree ring diagram generator.
 
 ![License: MIT](https://img.shields.io/badge/license-MIT-blue.svg)
