@@ -842,7 +842,7 @@
                 <div class="param-row">
                     <label for="centerName" id="nameLabel">名称 / Name:</label>
                     <textarea id="centerName" rows="3" placeholder="输入中心文字" onchange="updateCenterName(this.value)"
-                        oninput="updateCenterName(this.value)"></textarea>
+                        oninput="updateCenterName(this.value, true)"></textarea>
                 </div>
                 <div class="param-row">
                     <label for="ringCount" id="ringCountLabel">圈数 / Ring Count:</label>
@@ -3229,10 +3229,16 @@
 
         /**
          * Update center name / 更新中心名称
+         * @param {string} name - Center text / 中心文字
+         * @param {boolean} debounced - Debounce the redraw for keystrokes / 按键输入时对重绘防抖
          */
-        function updateCenterName(name) {
+        function updateCenterName(name, debounced = false) {
             config.centerNames[currentLanguage] = name;
-            generateCircle();
+            if (debounced) {
+                debouncedRegenerate();
+            } else {
+                generateCircle();
+            }
         }
 
         // Update ring color / 更新圈层颜色
@@ -3283,7 +3289,8 @@
         }
 
         // Update segment type / 更新分段类型
-        function updateSegmentType(index, segmentType) {
+        // silent=true updates data only and skips the redraw so callers can batch it / silent=true 仅更新数据并跳过重绘，便于调用方批量处理
+        function updateSegmentType(index, segmentType, silent = false) {
             // Keep all other properties unchanged, only update segment type related properties / 保持所有其他属性不变，只更新分段类型相关属性
             const currentRotation = config.rings[index].rotation || 0;
             const currentType = config.rings[index].type; // Keep color type unchanged / 保持颜色类型不变
@@ -3304,8 +3311,10 @@
             }
 
             // Regenerate interface and circle (does not change color type) / 重新生成界面和圆形（不会改变颜色类型）
-            generateRingParams();
-            generateCircle();
+            if (!silent) {
+                generateRingParams();
+                generateCircle();
+            }
         }
 
         // Update segment name / 更新分段名称
@@ -3343,7 +3352,8 @@
             // Reset all ring segment labels to adapt to new language / 重新设置所有圈层的分段标签以适应新语言
             config.rings.forEach((ring, index) => {
                 if (ring.segmentType && ring.segmentType !== 'manual') {
-                    updateSegmentType(index, ring.segmentType);
+                    // Data-only update; the single rebuild below covers every ring / 仅更新数据；下方统一重绘覆盖所有圈层
+                    updateSegmentType(index, ring.segmentType, true);
                 }
             });
 
